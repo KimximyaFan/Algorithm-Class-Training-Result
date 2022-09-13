@@ -1,0 +1,51 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class AAFE 
+{
+	public static void main (String[] args)
+	{
+		Scanner input = new Scanner(System.in);
+		
+		int n = input.nextInt();
+		
+		int[] dp = new int[44];
+		
+		dp[1] = 1;
+		
+		dp[2] = 1;
+		
+		for (int i=3; i<=43; i++)
+			dp[i] = dp[i-1] + dp[i-2];
+		
+		ArrayList<Integer> A = new ArrayList<>();
+		
+		int sum = n;
+		
+		int index = 43;
+		
+		while (true)
+		{			
+			if ( dp[index] <= sum )
+			{	
+				A.add(index);
+				
+				sum -= dp[index];
+				
+				index -= 2;
+			}
+			else
+				index--;
+			
+			if ( sum == 0 )
+				break;
+		}
+		
+		int Chicken = 0;
+		
+		for(int i=0; i<A.size(); i++)
+			Chicken += dp[A.get(i) - 1];
+		
+		System.out.print(Chicken);
+	}
+}
