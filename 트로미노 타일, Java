@@ -1,0 +1,132 @@
+/*
+실습용으로 짠 코드
+구림
+시간 1/5 가능함
+*/
+import java.util.Scanner;
+
+public class AAHG 
+{
+	public static int count = 0;
+	
+	public static void main (String[] args)
+	{
+		Scanner input = new Scanner(System.in);
+		
+		int n = (int)Math.pow(2, input.nextInt());
+		
+		int[][] A = new int[n+1][n+1];
+		
+		int y = input.nextInt();
+		int x = input.nextInt();
+		
+		boolean isPossible = true;
+		
+		A[x][y] = -1;
+		
+		f(A, x, y, 1, 1, n);
+		
+		for (int i=1; i<=n; i++)
+		{
+			for (int j=1; j<=n; j++)
+			{
+				if ( A[i][j] == 0 )
+					isPossible = false;
+			}
+		}
+		
+		if (isPossible)
+		{
+			for (int i=n; i>=1; i--)
+			{
+				for (int j=1; j<=n; j++)
+				{
+					System.out.print(A[i][j] + " ");
+				}
+				System.out.println();
+			}
+		}
+		else
+		{
+			System.out.print("-1");
+		}
+	}
+	
+	public static void f (int[][] A, int x, int y, int a, int b, int s)
+	{
+		if ( s == 2)
+		{
+			count++;
+			if ( x == a && y == b)
+			{
+				A[a][b+1] = count;
+				A[a+1][b+1] = count;
+				A[a+1][b] = count;
+			}
+			else if ( x == a && y == b+1)
+			{
+				A[a][b] = count;
+				A[a+1][b+1] = count;
+				A[a+1][b] = count;
+			}
+			else if ( x == a+1 && y == b+1 )
+			{
+				A[a][b] = count;
+				A[a][b+1] = count;
+				A[a+1][b] = count;
+			}
+			else
+			{
+				A[a][b] = count;
+				A[a][b+1] = count;
+				A[a+1][b+1] = count;
+			}
+			
+			return;
+		}
+
+		s = s/2;
+		
+		int x1,y1,x2,y2,x3,y3,x4,y4;
+		
+		count++;
+
+		if ( x <= a+s-1 && y <= b+s-1 )
+		{
+			x1 = x;     y1 = y;
+			x2 = a+s-1; y2 = b+s;
+			x3 = a+s;   y3 = b+s;
+			x4 = a+s;   y4 = b+s-1;
+			A[x2][y2] = count; A[x3][y3] = count; A[x4][y4] = count;
+		}
+		else if ( x<=a+s-1 && y > b+s-1)
+		{
+			x1 = a+s-1; y1 = b+s-1;
+			x2 = x;     y2 = y;
+			x3 = a+s;   y3 = b+s;
+			x4 = a+s;   y4 = b+s-1;
+			A[x1][y1] = count; A[x3][y3] = count; A[x4][y4] = count;
+		}
+		else if ( x>a+s-1 && y > b+s-1)
+		{
+			x1 = a+s-1; y1 = b+s-1;
+			x2 = a+s-1; y2 = b+s;
+			x3 = x;     y3 = y;
+			x4 = a+s;   y4 = b+s-1;
+			A[x1][y1] = count; A[x2][y2] = count; A[x4][y4] = count;
+		}
+		else
+		{
+			x1 = a+s-1; y1 = b+s-1;
+			x2 = a+s-1; y2 = b+s;
+			x3 = a+s;   y3 = b+s;
+			x4 = x;     y4 = y;
+			A[x1][y1] = count; A[x2][y2] = count; A[x3][y3] = count;
+		}
+
+		f(A, x1, y1, a, b, s);
+		f(A, x2, y2, a, b+s, s);
+		f(A, x3, y3, a+s, b+s, s);
+		f(A, x4, y4, a+s, b, s);
+	}
+}
