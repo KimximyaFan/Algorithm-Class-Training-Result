@@ -1,0 +1,117 @@
+/*
+최소 스패닝트리, 프림알고리즘
+완전그래프를 기준으로 만듬
+범용적으로 쓰려면 약간 수정해야함,
+
+1. 정점과 간선 가중치를 입력받음
+2. 프림알고리즘 실행
+3. 아무점이나 시작점 잡는데, 그래서 1로 시작점을 잡음
+4. D[1] = 0 임 // 간선 가중치 배열 D
+5. D의 배열을 for문을 정점 갯수만큼 돌린다. 
+6. 1과 연결된 i가 가중치가 있는지 확인 후, 그 값을 할당 한다. // 이프문으로 i 가 아님을 판별한다.
+7. 정점집합 T에 1을 넣는다.
+8. 와일문을 돌린다. // 조건은 T의 크기가 정점 갯수가 될때까지, (T.size() < n)
+9. for문을 돌리는데, D[i] 의 값이 최소인 걸 찾고, 그 인덱스도 기록한다. // 그 인덱스를 v라 한다.
+10. 그 인덱스가 정점이므로, T에 넣고, 최소가중치를 합값에 더한다. sum += min
+11. 그 후 또 for문을 돌리는데, T집합에 없는 i만 갖고 판별한다.
+12. 만약 i가 T집합에 없다면, D[i] 랑 A[v][i] or A[i][v] 값을 비교한다.
+13. 만약 A[v][i] or A[i][v] 값이 더 낮다면, 값이 갱신된다.
+*/
+
+import java.io.*;
+import java.util.StringTokenizer;
+import java.util.ArrayList;
+
+public class AAHN 
+{
+	public static int n;
+	public static int m;
+	public static int[][] A;
+	public static int[] D;
+	public static int sum = 0;
+	public static ArrayList<Integer> T = new ArrayList<>();
+	
+	public static void main (String[] args) throws IOException
+	{
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringTokenizer st;
+		
+		st = new StringTokenizer(input.readLine(), " ");
+		
+		n = Integer.parseInt(st.nextToken());
+		m = Integer.parseInt(st.nextToken());
+		
+		A = new int[n+1][n+1];
+		D = new int[n+1];
+		
+		for (int i=0; i<m; i++)
+		{
+			st = new StringTokenizer(input.readLine(), " ");
+			int a = Integer.parseInt(st.nextToken());
+			int b = Integer.parseInt(st.nextToken());
+			int c = Integer.parseInt(st.nextToken());
+			
+			A[a][b] = c;
+		}
+		
+		prim();
+		
+		output.write(sum + "");
+		output.close();
+		
+	}
+	
+	public static void prim()
+	{
+		D[1] = 0;
+		
+		for (int i=2; i<=n; i++)
+		{
+			if ( A[1][i] != 0 )
+				D[i] = A[1][i];
+			else
+				D[i] = A[i][1];
+		}
+		
+		T.add(1);
+		
+		while(T.size() < n)
+		{
+			int min = Integer.MAX_VALUE;
+			int v = 0;
+			
+			for (int i=2; i<=n; i++)
+			{
+				if ( T.contains(i) == false)
+				{
+					if (D[i] < min)
+					{
+						min = D[i];
+						v = i;
+					}
+				}
+			}
+
+			T.add(v);
+			sum += min;
+			
+			for (int i=2; i<=n; i++)
+			{
+				if ( T.contains(i) == false)
+				{
+					if ( A[v][i] != 0 )
+					{
+						if ( A[v][i] < D[i] )
+							D[i] = A[v][i];
+					}
+					else
+					{
+						if ( A[i][v] < D[i] )
+							D[i] = A[i][v];
+					}
+				}
+			}
+		}
+	}
+}
