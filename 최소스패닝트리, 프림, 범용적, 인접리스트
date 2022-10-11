@@ -1,0 +1,105 @@
+/*
+범용성 있고, 메모리 초과 안나게
+인접리스트로 구현된 것
+*/
+
+import java.io.*;
+import java.util.StringTokenizer;
+import java.util.ArrayList;
+
+public class AAHO 
+{
+	public static class pair
+	{
+		// a = 도착정점, b = 비용
+		public int a,b;
+		pair () {}
+		pair (int a, int b) { this.a = a; this.b = b; }
+	}
+	
+	public static int n;
+	public static int m;
+	public static int[] D;
+	public static int sum = 0;
+	public static ArrayList<Integer> T = new ArrayList<>();
+	public static ArrayList<ArrayList<pair>> A = new ArrayList<>();
+	
+	public static void main (String[] args) throws IOException
+	{
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringTokenizer st;
+		
+		st = new StringTokenizer(input.readLine(), " ");
+		
+		n = Integer.parseInt(st.nextToken());
+		m = Integer.parseInt(st.nextToken());
+		
+		for (int i=0; i<=n; i++)
+			A.add(new ArrayList<>());
+	
+		D = new int[n+1];
+		
+		for (int i=1; i<=n; i++)
+			D[i] = Integer.MAX_VALUE;
+		
+		for (int i=0; i<m; i++)
+		{
+			st = new StringTokenizer(input.readLine(), " ");
+			int a = Integer.parseInt(st.nextToken());
+			int b = Integer.parseInt(st.nextToken());
+			int c = Integer.parseInt(st.nextToken());
+			
+			A.get(a).add(new pair(b,c));
+			A.get(b).add(new pair(a,c));
+		}
+		
+		prim();
+		
+		output.write(sum + "\n");
+		output.close();
+		
+	}
+	
+	public static void prim()
+	{
+		D[1] = 0;
+		
+		for (int i=0; i<A.get(1).size(); i++)
+			D[A.get(1).get(i).a] = A.get(1).get(i).b;
+		
+		T.add(1);
+		
+		while(T.size() < n)
+		{
+			int min = Integer.MAX_VALUE;
+			int v = 0;
+			
+			for (int i=2; i<=n; i++)
+			{
+				if ( T.contains(i) == false)
+				{
+					if (D[i] < min)
+					{
+						min = D[i];
+						v = i;
+					}
+				}
+			}
+
+			T.add(v);
+			sum += min;
+			
+			for (int i=0; i<A.get(v).size(); i++)
+			{
+				int temp = A.get(v).get(i).a;
+				
+				if ( T.contains(temp) == false)
+				{
+					if (A.get(v).get(i).b < D[temp])
+						D[temp] = A.get(v).get(i).b;
+				}
+			}
+		}
+	}
+}
