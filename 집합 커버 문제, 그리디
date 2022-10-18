@@ -1,0 +1,90 @@
+import java.io.*;
+import java.util.*;
+
+public class AAHX 
+{
+	static ArrayList<ArrayList<Integer>> E = new ArrayList<>();
+	static ArrayList<Integer> C = new ArrayList<>();
+	static Set<Integer> U = new HashSet<>();
+	static boolean[] F;
+	
+	public static void main (String[] args) throws IOException
+	{
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringTokenizer st;
+
+		st = new StringTokenizer(input.readLine(), " ");
+		
+		int N = Integer.parseInt(st.nextToken());
+		int M = Integer.parseInt(st.nextToken());
+		
+		F = new boolean[N+1];
+		
+		for (int i=0; i<=N; i++)
+		{
+			E.add(new ArrayList<>());
+			U.add(i);
+		}
+		
+		U.remove(0);
+		
+		for (int i=0; i<M; i++)
+		{
+			st = new StringTokenizer(input.readLine(), " ");
+			int u = Integer.parseInt(st.nextToken());
+			int v = Integer.parseInt(st.nextToken());
+			
+			E.get(u).add(v);
+			E.get(v).add(u);
+		}
+		
+		f();
+		
+		Collections.sort(C);
+		
+		for (int i=0; i<C.size(); i++)
+			output.write(A[i] + " ");
+		
+		output.close();
+	}
+	
+	public static void f()
+	{
+		while( !U.isEmpty() )
+		{
+			int max = 0;
+			int mIndex = 0;
+			
+			for (int i=1; i<=E.size()-1; i++)
+			{
+				if ( F[i] == false )
+				{
+					int count = 0;
+					
+					if ( U.contains(i) == true)
+						count++;
+					
+					for (int j=0; j<E.get(i).size(); j++)
+					{
+						if ( U.contains(E.get(i).get(j)) == true )
+							count++;
+					}
+					
+					if ( count > max )
+					{
+						max = count;
+						mIndex = i;
+					}
+				}
+			}
+			
+			F[mIndex] = true;
+			U.remove(mIndex);
+			for (int i=0; i<E.get(mIndex).size(); i++)
+				U.remove(E.get(mIndex).get(i));
+			
+			C.add(mIndex);
+		}
+	}
+}
