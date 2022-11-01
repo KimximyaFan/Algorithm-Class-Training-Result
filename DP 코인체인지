@@ -1,0 +1,40 @@
+import java.io.*;
+import java.util.*;
+
+public class AAIG 
+{
+	static ArrayList<Integer> A = new ArrayList<>();
+	
+	public static void main (String[] args) throws IOException
+	{
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(System.out));
+		StringTokenizer st;
+		
+		st = new StringTokenizer(input.readLine(), " ,");
+		
+		while (st.hasMoreTokens())
+			A.add( Integer.parseInt(st.nextToken()) );
+		
+		int M = Integer.parseInt(input.readLine());
+		
+		int[] C = new int[M+1];
+		
+		for (int i=1; i<=M; i++)
+			C[i] = 100000;
+		
+		for (int i=1; i<=M; i++)
+		{
+			for (int j=0; j<A.size(); j++)
+			{
+				int d = A.get(j);
+				
+				if (d <= i && C[i-d]+1 < C[i])
+					C[i] = C[i-d]+1;
+			}
+		}
+		
+		output.write(C[M] + "");
+		output.close();
+	}
+}
