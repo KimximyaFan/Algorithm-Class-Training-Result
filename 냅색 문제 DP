@@ -1,0 +1,58 @@
+import java.io.*;
+import java.util.*;
+
+public class AAIL 
+{
+	public static class Stuff // 물건 객체를 정의
+	{
+		public int v, w; // 객체의 property 인 v 와 w 이다. v는 가치, w는 무게
+		
+		Stuff () { this.v = 0; this.w = 0; } // default 생성자
+		Stuff (int value, int weight) { this.v = value; this.w = weight; } // 인풋 있는 생성자
+	}
+	
+	public static void main (String[] args) throws IOException // 메인함수, 인풋 아웃풋 에러시 IOException을 던짐
+	{
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in)); // 입력 받는 객체
+		BufferedWriter output = new BufferedWriter(new OutputStreamWriter(System.out)); // 출력 하는 객체
+		StringTokenizer st; // 문자열을 나눠주는 객체
+		
+		st = new StringTokenizer(input.readLine(), " "); // 스트링토크나이저 객체 st에 input으로 입력받고 공백을 기준으로 나눈다.
+		
+		int N = Integer.parseInt(st.nextToken()); // 물건의 갯수 N
+		int W = Integer.parseInt(st.nextToken()); // 가방의 최대 무게 W
+		int[] dp = new int[W+1]; // 메모제이션에 쓰일 배열, dp[i]는 무게가 i일 때의 최대 가치가 저장된다.
+		Stuff[] A = new Stuff[N]; // 물건들에 대한 배열, Stuff 객체를 쓰므로 Stuff[] 배열을 이용한다.
+		
+		for (int i=0; i<N; i++) // 물건들에 대한 정보를 입력 받을 포문, N번 돌린다.
+		{
+			st = new StringTokenizer(input.readLine(), " "); // 스트링토크나이저 객체 st에 input으로 입력받고 공백을 기준으로 나눈다.
+			int v = Integer.parseInt(st.nextToken()); // 가치 v를 스트링토크나이저 객체 st로부터 받는다.
+			int w = Integer.parseInt(st.nextToken()); // 무게 w를 스트링토크나이저 객체 st로부터 받는다.
+			
+			A[i] = new Stuff(v, w); // 물건들의 배열 A에 stuff 객체를 생성해서 할당한다.
+		}
+		
+		// top-down 방식의 냅색 DP, 이 방법은 dp[] 배열을 1차원만 쓴다는 점에서 장점이 있다.
+		for (int i=0; i<N; i++) // 각각 물건의 경우에 대해 따지기 위한 포문을 돌린다.
+		{
+			int tempW = A[i].w; // i번째 물건 A[i]무게를 담을 tempW를 정의한다.
+			
+			for (int j=W; j>0; j--) // 배낭의 무게 W에서부터 차례로 1씩 줄여나가는 top-down 방식 포문
+			{
+				if ( j < tempW ) // 물건 i의 무게 tempW가 배낭의 무게 j 보다 커지는 경우는 포문을 끝낸다.
+					break;
+				
+				// A[i].v 는 i번째 물건의 가치이다. i번째 물건을 배낭에 넣고 남는 무게 j - tempW 에 대해서, 해당 무게에 대한 최적해를 이용한다.
+				int tempV = dp[j - tempW] + A[i].v; // 그래서 tempV 에는 남는 무게에 대한 최적해 dp[j - tempW] 값에 
+				                                    // i번째 물건 가치인 A[i].v를 더한다.
+				
+				// 그런데 dp[j]에는 최대 가치의 값이 들어가야하므로, tempV가 dp[j]보다 큰지 판별해야한다.
+				dp[j] = Math.max(dp[j], tempV); // 만약 크다면 dp[j]값이 갱신된다.
+			}
+		}
+		
+		output.write(dp[W] + ""); // 모든 포문이 끝나면, dp[W]에는 최적해가 들어가 있으므로, dp[W]를 출력
+		output.close(); // 출력 객체를 닫는다.
+	}
+}
