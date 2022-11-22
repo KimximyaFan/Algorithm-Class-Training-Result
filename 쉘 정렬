@@ -1,0 +1,59 @@
+import java.util.*; // 유틸 라이브러리 임포트
+import java.io.*; // 입출력 라이브러리 임포트
+
+public class AAIR 
+{
+	static int[] A; // 입력받고 정렬을 할 정수배열 A
+	static int index = 0; // 간격 h 값에 대한 인덱스를 담을 변수
+	static int N; // 배열의 크기 N
+	static int[] Gap = { 5818032, 2585792, 1149241, 510774, 227011, 100894, 44842, 19930, 8858, 
+			3937, 1750, 701, 301, 132, 57, 23, 10, 4, 1 }; // 간격 값이 담긴 배열
+	
+	public static void main (String[] args) throws IOException // 메인함수, 입출력 오류시 예외 던짐
+	{
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in)); // 입력 객체
+		BufferedWriter output =new BufferedWriter(new OutputStreamWriter(System.out)); // 출력 객체
+		
+		N = Integer.parseInt(input.readLine()); // 배열 크기 N을 입력받는다.
+		A = new int[N]; // 크기 N만큼 정수배열을 정의 해준다.
+		
+		for (int i=0; i<Gap.length; i++) // 간격 값을 찾기 위한 포문이다. 간격의 크기는 N보다 작거나 같아야 한다.
+		{
+			if ( Gap[i] > N ) // 만약 간격의 크기가 N보다 크다면 간격 배열에 대한 인덱스는 증가한다.
+				index++;
+			else // 간격이 N보다 작거나 같으면 포문 탈출
+				break;
+		}
+		
+		for (int i=0; i<N; i++) // 크기 N만큼 포문을 돌린다. 
+			A[i] = Integer.parseInt(input.readLine()); // 정수배열 A에 입력을 받는다.
+		
+		Shellsort(); // 정렬함수 실행
+		
+		for (int i=0; i<N; i++) // 크기 N만큼 포문을 돌린다.
+			output.write(A[i] + "\n"); // 정수배열 A 출력
+		output.close(); // 출력객체를 닫는다.
+	}
+	
+	public static void Shellsort() { // 쉘정렬 함수
+		for (int i=index; i<Gap.length; i++) { // 해당 인덱스의 간격부터 크기 1의 간격까지 포문을 돌린다.
+			int h = Gap[i]; // Gap 배열에 담긴 간격 Gap[i]값을 담을, 간격의 크기 h이다.
+			
+			// 간격 h에 대한 삽입정렬 부분이다.
+			for (int j=h; j<N; j++) { // 해당 간격 h부터 정수 배열 끝까지의 인덱스에대한 배열 값에 대해서 포문을 돌린다.
+				int current = A[j]; // j 인덱스 배열값 A[j]를 삽입정렬 하므로, 값을 저장할 current 변수이다. 
+				
+				int k = j; // 간격 h만큼 인덱스를 줄여나가기 위한 정수 변수 k이다.
+				
+				// k 값이 h보다 커야한다. k 값은 간격만큼 값을 줄여나가는데, k값이 h보다 작다면 음수가 된다.
+				// A[j]값인 current 값이 A[k-h]보다 작아야 인덱스 변환이 앞으로 진행된다.
+				while ( k >= h && A[k-h] > current )  {
+					A[k] = A[k-h]; // 조건 충족시, 간격 만큼 떨어진 더 작은 인덱스의 값을 뒤로 보낸다.
+					k -= h; // k 값을 간격만큼 줄인다.
+				}
+				
+				A[k] = current; // 최종 와일문 탈출시 k 인덱스에는 current 값이 담기면 된다.
+			}
+		}
+	}
+}
